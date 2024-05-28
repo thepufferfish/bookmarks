@@ -5,6 +5,11 @@ name = "pypi"
 
 [packages]
 scrapy = "*"
+ipykernel = "*"
+jupyter = "*"
+pandas = "*"
+scikit-learn = "*"
+nltk = "*"
 
 [dev-packages]
 
