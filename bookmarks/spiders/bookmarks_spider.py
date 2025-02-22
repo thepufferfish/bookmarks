@@ -37,7 +37,7 @@ class BookmarksSpider(SitemapSpider):
         }
 
         see_all_reviews_link = response.xpath('//a[contains(text(), "See All Reviews")]/@href').get()
-
+        see_all_reviews_link = see_all_reviews_link.replace('//all', '/all')
         if see_all_reviews_link:
             request = response.follow(see_all_reviews_link, self.parse_reviews)
             request.meta['book_data'] = book_data

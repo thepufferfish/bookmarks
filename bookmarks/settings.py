@@ -14,20 +14,20 @@ NEWSPIDER_MODULE = "bookmarks.spiders"
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = "bookmarks (+http://www.yourdomain.com)"
+USER_AGENT = "bookmarks (+http://www.github.com/thepufferfish)"
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-#CONCURRENT_REQUESTS = 32
+CONCURRENT_REQUESTS = 1
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
 DOWNLOAD_DELAY = 10
 # The download delay setting will honor only one of:
-#CONCURRENT_REQUESTS_PER_DOMAIN = 16
+CONCURRENT_REQUESTS_PER_DOMAIN = 1
 #CONCURRENT_REQUESTS_PER_IP = 16
 
 # Disable cookies (enabled by default)
@@ -50,9 +50,9 @@ DOWNLOAD_DELAY = 10
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    "bookmarks.middlewares.BookmarksDownloaderMiddleware": 543,
-#}
+DOWNLOADER_MIDDLEWARES = {
+   "bookmarks.middlewares.BookmarksDownloaderMiddleware": 543,
+}
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
@@ -94,4 +94,24 @@ FEED_EXPORT_ENCODING = "utf-8"
 
 LOG_FILE = "data/logs/scrapy.log"
 LOG_APPEND = False
-LOG_LEVEL = "DEBUG"
+LOG_LEVEL = "INFO"
+
+RETRY_ENABLED = True
+RETRY_TIMES = 4  # initial response + 2 retries = 3 requests
+RETRY_HTTP_CODES = [500, 502, 503, 504, 522, 524, 408, 429, 403]
+RETRY_PRIORITY_ADJUST = -1
+RETRY_EXCEPTIONS = [
+    "twisted.internet.defer.TimeoutError",
+    "twisted.internet.error.TimeoutError",
+    "twisted.internet.error.DNSLookupError",
+    "twisted.internet.error.ConnectionRefusedError",
+    "twisted.internet.error.ConnectionDone",
+    "twisted.internet.error.ConnectError",
+    "twisted.internet.error.ConnectionLost",
+    "twisted.internet.error.TCPTimedOutError",
+    "twisted.web.client.ResponseFailed",
+    # OSError is raised by the HttpCompression middleware when trying to
+    # decompress an empty response
+    OSError,
+    "scrapy.core.downloader.handlers.http11.TunnelError",
+]

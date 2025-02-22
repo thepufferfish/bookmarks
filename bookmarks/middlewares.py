@@ -78,7 +78,15 @@ class BookmarksDownloaderMiddleware:
         # - or return a Request object
         # - or raise IgnoreRequest: process_exception() methods of
         #   installed downloader middleware will be called
-        return None
+
+        url = request.url
+        if url.find('https://bookmarks.reviews/bookmark') != -1:
+            new_url = url.replace('https://bookmarks.reviews/bookmark', 'https://bookmarks.reviews/reviews')
+            spider.logger.debug(f'Redirecting from {url} to {new_url}') 
+            request = request.replace(url=new_url)
+            return request
+        else:
+            return None
 
     def process_response(self, request, response, spider):
         # Called with the response returned from the downloader.
