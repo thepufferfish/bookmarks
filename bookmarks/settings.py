@@ -56,15 +56,17 @@ DOWNLOADER_MIDDLEWARES = {
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
-#EXTENSIONS = {
-#    "scrapy.extensions.telnet.TelnetConsole": None,
-#}
+EXTENSIONS = {
+    "scrapy.extensions.telnet.TelnetConsole": None,
+    "scrapy.extensions.logstats.LogStats": None, # disable standard logging and use kafka instead
+    "kafka_scrapy_connect.extensions.KafkaLogStats": 500
+}
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    "bookmarks.pipelines.BookmarksPipeline": 300,
-#}
+ITEM_PIPELINES = {
+    "kafka_scrapy_connect.pipelines.KafkaPublishPipeline": 100
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
@@ -92,10 +94,6 @@ REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
 
-LOG_FILE = "data/logs/scrapy.log"
-LOG_APPEND = False
-LOG_LEVEL = "INFO"
-
 RETRY_ENABLED = True
 RETRY_TIMES = 4  # initial response + 2 retries = 3 requests
 RETRY_HTTP_CODES = [500, 502, 503, 504, 522, 524, 408, 429, 403]
@@ -115,3 +113,9 @@ RETRY_EXCEPTIONS = [
     OSError,
     "scrapy.core.downloader.handlers.http11.TunnelError",
 ]
+
+# kafka settings
+SCRAPY_KAFKA_HOSTS = "kafka:9092"
+SCRAPY_ERROR_TOPIC = "ScrapyErrors"
+SCRAPY_STATS_TOPIC = "SrapyStats"
+SCRAPY_OUTPUT_TOPIC = "bookmarks"

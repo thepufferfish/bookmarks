@@ -1,3 +1,4 @@
+import uuid
 from scrapy.spiders import SitemapSpider
 from datetime import datetime
 
@@ -25,6 +26,7 @@ class BookmarksSpider(SitemapSpider):
         genres = [genre.strip() for genre in response.xpath('//span[@itemprop="genre"]/text()').getall()]
 
         book_data = {
+            'book_id': str(uuid.uuid5(uuid.NAMESPACE_DNS, title + author)),
             'title': title,
             'author': author,
             'publisher': publisher,
@@ -32,7 +34,7 @@ class BookmarksSpider(SitemapSpider):
             'description': description,
             'genres': genres,
             'link': response.url,
-            'last_scraped': datetime.now().astimezone(),
+            'last_scraped': datetime.now().isoformat(),
             'reviews': []
         }
 
