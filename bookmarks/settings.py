@@ -7,6 +7,13 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
+from fake_useragent import UserAgent
+from bookmarks.proxies import create_proxy_list
+
+create_proxy_list()
+
+ua = UserAgent()
+
 BOT_NAME = "bookmarks"
 
 SPIDER_MODULES = ["bookmarks.spiders"]
@@ -51,8 +58,20 @@ CONCURRENT_REQUESTS_PER_DOMAIN = 1
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
-   "bookmarks.middlewares.BookmarksDownloaderMiddleware": 543,
+    "bookmarks.middlewares.BookmarksDownloaderMiddleware": 543,
+    "rotating_proxies.middlewares.RotatingProxyMiddleware": 610,
+    "rotating_proxies.middlewares.BanDetectionMiddleware": 620,
+    "scrapy_user_agents.middlewares.RandomUserAgentMiddleware": 630
 }
+
+RANDOM_UA_PER_PROXY = True
+USER_AGENT_LIST = [ua.random for _ in range(200)]
+
+ROTATING_PROXY_LIST_PATH = "proxy_list.txt"
+ROTATING_PROXY_PAGE_RETRY_TIMES = 5
+ROTATING_PROXY_BACKOFF_BASE = 600
+ROTATING_PROXY_BACKOFF_CAP = 24*3600
+ROTATING_PROXY_CLOSE_SPIDER = False
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
